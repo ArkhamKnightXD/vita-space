@@ -8,14 +8,14 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
   endif()
 endif()
 
-project(image)
+project(space)
 include("${VITASDK}/share/vita.cmake" REQUIRED)
 
 set(SDL2_DIR ${VITASDK}/arm-vita-eabi/lib/cmake/SDL2/)
 find_package(SDL2 REQUIRED)
 
-set(VITA_APP_NAME "SDL Image")
-set(VITA_TITLEID  "VSDK00018")
+set(VITA_APP_NAME "Vita Space")
+set(VITA_TITLEID  "VSDK00050")
 set(VITA_VERSION  "01.00")
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11")
@@ -53,5 +53,10 @@ vita_create_vpk(${PROJECT_NAME}.vpk ${VITA_TITLEID} ${PROJECT_NAME}.self
   FILE sce_sys/livearea/contents/bg.png sce_sys/livearea/contents/bg.png
   FILE sce_sys/livearea/contents/startup.png sce_sys/livearea/contents/startup.png
   FILE sce_sys/livearea/contents/template.xml sce_sys/livearea/contents/template.xml
-  FILE sprites/sprite.png sprites/sprite.png 
+  FILE sprites/alien_1.png sprites/alien_1.png 
+  FILE sprites/alien_2.png sprites/alien_2.png 
+  FILE sprites/alien_3.png sprites/alien_3.png 
+  FILE sprites/mystery.png sprites/mystery.png 
+  FILE sprites/spaceship.png sprites/spaceship.png 
+  FILE sprites/structure.png sprites/structure.png 
 )

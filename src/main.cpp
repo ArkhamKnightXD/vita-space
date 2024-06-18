@@ -1,32 +1,117 @@
 #include <psp2/kernel/processmgr.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <iostream>
+#include <vector>
 
 enum {
   SCREEN_WIDTH  = 960,
   SCREEN_HEIGHT = 544
 };
+const int FRAME_RATE = 60;
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 SDL_GameController* controller = NULL;
-SDL_Texture* sprite;
-
-SDL_Rect spriteBounds = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 64, 64};
-
-const int SPEED = 600; 
-const int FRAME_RATE = 60;
  
-SDL_Texture* loadSprite(const char* file, SDL_Renderer* renderer) {
+typedef struct
+{
+    SDL_Rect bounds;
+    SDL_Texture *sprite;
+    int lives;
+    int speed;
+} Player;
 
-    SDL_Texture* texture = IMG_LoadTexture(renderer, file);
+Player player;
+
+typedef struct
+{
+    SDL_Rect bounds;
+    SDL_Texture *sprite;
+    int points;
+    int velocityX;
+    bool shouldMove;
+    bool isDestroyed;
+} MysteryShip;
+
+MysteryShip mysteryShip;
+
+typedef struct
+{
+    SDL_Rect bounds;
+    SDL_Texture *sprite;
+    int lives;
+    bool isDestroyed;
+} Structure;
+
+std::vector<Structure> structures;
+
+SDL_Texture *loadSprite(const char *file)
+{
+    SDL_Texture *texture = IMG_LoadTexture(renderer, file);
     return texture;
 }
 
-void renderSprite(SDL_Texture* sprite, SDL_Renderer* renderer, SDL_Rect spriteBounds) {
+typedef struct
+{
+    SDL_Rect bounds;
+    SDL_Texture *sprite;
+    int points;
+    int velocity;
+    bool isDestroyed;
+} Alien;
 
-    SDL_QueryTexture(sprite, NULL, NULL, &spriteBounds.w, &spriteBounds.h);
-    SDL_RenderCopy(renderer, sprite, NULL, &spriteBounds);
+std::vector<Alien> aliens;
+
+std::vector<Alien> createAliens()
+{
+    SDL_Texture *alienSprite1 = loadSprite("sprites/alien_1.png");
+    SDL_Texture *alienSprite2 = loadSprite("sprites/alien_2.png");
+    SDL_Texture *alienSprite3 = loadSprite("sprites/alien_3.png");
+
+    std::vector<Alien> aliens;
+
+    int positionX;
+    int positionY = 80;
+    int alienPoints = 8;
+
+    SDL_Texture *actualSprite;
+
+    for (int row = 0; row < 5; row++)
+    {
+        positionX = 150;
+
+        switch (row)
+        {
+
+        case 0:
+            actualSprite = alienSprite3;
+            break;
+
+        case 1:
+        case 2:
+            actualSprite = alienSprite2;
+            break;
+
+        default:
+            actualSprite = alienSprite1;
+        }
+
+        for (int columns = 0; columns < 11; columns++)
+        {
+            SDL_Rect alienBounds = {positionX, positionY, 38, 34};
+
+            Alien actualAlien = {alienBounds, actualSprite, alienPoints, 50, false};
+
+            aliens.push_back(actualAlien);
+            positionX += 60;
+        }
+
+        alienPoints--;
+        positionY += 50;
+    }
+
+    return aliens;
 }
 
 void quitGame() {
@@ -55,33 +140,43 @@ void update(float deltaTime) {
 
     SDL_GameControllerUpdate();
 
-    if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_UP) && spriteBounds.y > 0) {
-        spriteBounds.y -= SPEED * deltaTime;
+    if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_LEFT) && player.bounds.x > 0) {
+        player.bounds.x -= player.speed * deltaTime;
     }
 
-    else if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_DOWN) && spriteBounds.y < SCREEN_HEIGHT - spriteBounds.h) {
-        spriteBounds.y += SPEED * deltaTime;
-    }
-
-    else if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_LEFT) && spriteBounds.x > 0) {
-        spriteBounds.x -= SPEED * deltaTime;
-    }
-
-    else if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_RIGHT) && spriteBounds.x < SCREEN_WIDTH - spriteBounds.w) {
-        spriteBounds.x += SPEED * deltaTime;
+    else if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_RIGHT) && player.bounds.x < SCREEN_WIDTH - player.bounds.w) {
+        player.bounds.x += player.speed * deltaTime;
     }
 }
 
-void render() {
+void renderSprite(SDL_Texture *sprite, SDL_Rect spriteBounds)
+{
+    SDL_QueryTexture(sprite, NULL, NULL, &spriteBounds.w, &spriteBounds.h);
+    SDL_RenderCopy(renderer, sprite, NULL, &spriteBounds);
+}
 
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+void render()
+{
+    SDL_SetRenderDrawColor(renderer, 29, 29, 27, 255);
     SDL_RenderClear(renderer);
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-    renderSprite(sprite, renderer, spriteBounds);
+    renderSprite(mysteryShip.sprite, mysteryShip.bounds);
 
-    SDL_RenderPresent(renderer);  
+    for (Alien alien : aliens)
+    {
+        renderSprite(alien.sprite, alien.bounds);
+    }
+
+    for (Structure structure : structures)
+    {
+        renderSprite(structure.sprite, structure.bounds);
+    }
+
+    renderSprite(player.sprite, player.bounds);
+
+    SDL_RenderPresent(renderer);
 }
 
 void capFrameRate(Uint32 frameStartTime) {
@@ -99,7 +194,7 @@ int main() {
         return -1;
     }
 
-    if ((window = SDL_CreateWindow("sdl-image", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN)) == NULL) {
+    if ((window = SDL_CreateWindow("space", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN)) == NULL) {
         return -1;
     }
 
@@ -121,23 +216,51 @@ int main() {
         }
     }
 
-    sprite = loadSprite("sprites/sprite.png", renderer);
+    if (!IMG_Init(IMG_INIT_PNG)){
+        return -1;
+    }
+
+    SDL_Texture *shipSprite = loadSprite("sprites/mystery.png");
+
+    SDL_Rect shipBounds = {SCREEN_WIDTH / 2, 30, 58, 25};
+
+    mysteryShip = {shipBounds, shipSprite, 50, -100, false, false};
+
+    aliens = createAliens();
+
+    SDL_Texture *playerSprite = loadSprite("sprites/spaceship.png");
+
+    SDL_Rect playerBounds = {SCREEN_WIDTH / 2, SCREEN_HEIGHT - 50, 38, 34};
+
+    player = {playerBounds, playerSprite, 2, 600};
+
+    SDL_Rect structureBounds = {120, SCREEN_HEIGHT - 100, 56, 33};
+    SDL_Rect structureBounds2 = {350, SCREEN_HEIGHT - 100, 56, 33};
+    SDL_Rect structureBounds3 = {200*3, SCREEN_HEIGHT - 100, 56, 33};
+    SDL_Rect structureBounds4 = {200*4, SCREEN_HEIGHT - 100, 56, 33};
+
+    SDL_Texture *structureSprite = loadSprite("sprites/structure.png");
+
+    structures.push_back({structureBounds, structureSprite, 5, false});
+    structures.push_back({structureBounds2, structureSprite, 5, false});
+    structures.push_back({structureBounds3, structureSprite, 5, false});
+    structures.push_back({structureBounds4, structureSprite, 5, false});
 
     Uint32 previousFrameTime = SDL_GetTicks();
-    Uint32 currentFrameTime;
-    float deltaTime;
+    Uint32 currentFrameTime = previousFrameTime;
+    float deltaTime = 0.0f;
 
-    while (true) {
-
+    while (true)
+    {
         currentFrameTime = SDL_GetTicks();
+
         deltaTime = (currentFrameTime - previousFrameTime) / 1000.0f;
+
         previousFrameTime = currentFrameTime;
 
         handleEvents();
         update(deltaTime);
         render();
-
-        capFrameRate(currentFrameTime);
     }
 
     quitGame();
