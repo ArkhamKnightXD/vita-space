@@ -35,6 +35,7 @@ typedef struct
     SDL_Texture *sprite;
     int lives;
     int speed;
+    int score;
 } Player;
 
 Player player;
@@ -71,6 +72,8 @@ SDL_Texture *loadSprite(const char *file)
 
 typedef struct
 {
+    float x;
+    float y;
     SDL_Rect bounds;
     SDL_Texture *sprite;
     int points;
@@ -121,7 +124,7 @@ std::vector<Alien> createAliens()
         {
             SDL_Rect alienBounds = {positionX, positionY, 38, 34};
 
-            Alien actualAlien = {alienBounds, actualSprite, alienPoints, 100, false};
+            Alien actualAlien = {(float)positionX, (float)positionY, alienBounds, actualSprite, alienPoints, 100, false};
 
             aliens.push_back(actualAlien);
             positionX += 60;
@@ -149,7 +152,6 @@ void aliensMovement(float deltaTime)
         }
     }
 
-    // It moves faster when going to the left.
     if (shouldChangeVelocity)
     {
         for (Alien &alien : aliens)
@@ -164,7 +166,8 @@ void aliensMovement(float deltaTime)
     {
         for (Alien &alien : aliens)
         {
-            alien.bounds.y += 10;
+            alien.y += 500 * deltaTime;
+            alien.bounds.y = alien.y;
         }
 
         shouldAliensGoDown = false;
@@ -172,7 +175,8 @@ void aliensMovement(float deltaTime)
 
     for (Alien &alien : aliens)
     {
-        alien.bounds.x += alien.velocity * deltaTime;
+        alien.x += alien.velocity * deltaTime;
+        alien.bounds.x = alien.x;
     }
 }
 
@@ -341,7 +345,7 @@ void update(float deltaTime) {
         {
             laser.isDestroyed = true;
 
-            // player.score += mysteryShip.points;
+            player.score += mysteryShip.points;
 
             mysteryShip.isDestroyed = true;
 
@@ -355,7 +359,7 @@ void update(float deltaTime) {
                 alien.isDestroyed = true;
                 laser.isDestroyed = true;
 
-                // player.score += alien.points;
+                player.score += alien.points;
 
                 // Mix_PlayChannel(-1, explosionSound, 0);
             }
@@ -465,15 +469,6 @@ void render()
     SDL_RenderPresent(renderer);
 }
 
-void capFrameRate(Uint32 frameStartTime) {
-
-    Uint32 frameTime = SDL_GetTicks() - frameStartTime;
-    
-    if (frameTime < 1000 / FRAME_RATE) {
-        SDL_Delay(1000 / FRAME_RATE - frameTime);
-    }
-}
-
 int main() {
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0) {
@@ -529,7 +524,7 @@ int main() {
 
     SDL_Rect playerBounds = {SCREEN_WIDTH / 2, SCREEN_HEIGHT - 40, 38, 34};
 
-    player = {playerBounds, playerSprite, 2, 600};
+    player = {playerBounds, playerSprite, 2, 600, 0};
 
     SDL_Rect structureBounds = {120, SCREEN_HEIGHT - 120, 56, 33};
     SDL_Rect structureBounds2 = {350, SCREEN_HEIGHT - 120, 56, 33};
@@ -547,7 +542,6 @@ int main() {
     Uint32 currentFrameTime = previousFrameTime;
     float deltaTime = 0.0f;
 
-//Activating random seed
     srand(time(NULL));
 
     while (true)
@@ -561,8 +555,6 @@ int main() {
         handleEvents();
         update(deltaTime);
         render();
-
-        // capFrameRate(currentFrameTime);
     }
 
     quitGame();
