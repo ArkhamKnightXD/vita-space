@@ -484,6 +484,9 @@ int main() {
         return -1;
     }
 
+    // Using SDL_RENDERER_PRESENTVSYNC effectively synchronizes your rendering with the display's refresh rate, which should cap the framerate to the refresh rate
+    //  of the display (commonly 60 Hz, resulting in 60 FPS). This means that, in most cases, you don't need to manually cap the framerate since VSync already
+    //  limits the maximum framerate to match the display's refresh rate.
     if ((renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC)) == NULL) {
         return -1;
     }
@@ -559,7 +562,7 @@ int main() {
         update(deltaTime);
         render();
 
-        capFrameRate(currentFrameTime);
+        // capFrameRate(currentFrameTime);
     }
 
     quitGame();
