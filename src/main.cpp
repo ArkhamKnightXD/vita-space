@@ -8,7 +8,6 @@ enum {
   SCREEN_WIDTH  = 960,
   SCREEN_HEIGHT = 544
 };
-const int FRAME_RATE = 60;
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
