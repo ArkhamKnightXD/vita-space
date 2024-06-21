@@ -87,9 +87,9 @@ bool shouldAliensGoDown = false;
 
 std::vector<Alien> createAliens()
 {
-    SDL_Texture *alienSprite1 = loadSprite("alien_1.png");
-    SDL_Texture *alienSprite2 = loadSprite("alien_2.png");
-    SDL_Texture *alienSprite3 = loadSprite("alien_3.png");
+    SDL_Texture *alienSprite1 = loadSprite("res/sprites/alien_1.png");
+    SDL_Texture *alienSprite2 = loadSprite("res/sprites/alien_2.png");
+    SDL_Texture *alienSprite3 = loadSprite("res/sprites/alien_3.png");
 
     std::vector<Alien> aliens;
 
@@ -508,10 +508,10 @@ int main() {
         printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
     }
 
-    laserSound = loadSound("laser.ogg");
-    explosionSound = loadSound("explosion.ogg");
+    laserSound = loadSound("res/sounds/laser.ogg");
+    explosionSound = loadSound("res/sounds/explosion.ogg");
 
-    SDL_Texture *shipSprite = loadSprite("mystery.png");
+    SDL_Texture *shipSprite = loadSprite("res/sprites/mystery.png");
 
     SDL_Rect shipBounds = {SCREEN_WIDTH, 40, 58, 25};
 
@@ -519,7 +519,7 @@ int main() {
 
     aliens = createAliens();
 
-    SDL_Texture *playerSprite = loadSprite("spaceship.png");
+    SDL_Texture *playerSprite = loadSprite("res/sprites/spaceship.png");
 
     SDL_Rect playerBounds = {SCREEN_WIDTH / 2, SCREEN_HEIGHT - 40, 38, 34};
 
@@ -530,7 +530,7 @@ int main() {
     SDL_Rect structureBounds3 = {200 * 3, SCREEN_HEIGHT - 120, 56, 33};
     SDL_Rect structureBounds4 = {200 * 4, SCREEN_HEIGHT - 120, 56, 33};
 
-    SDL_Texture *structureSprite = loadSprite("structure.png");
+    SDL_Texture *structureSprite = loadSprite("res/sprites/structure.png");
 
     structures.push_back({structureBounds, structureSprite, 5, false});
     structures.push_back({structureBounds2, structureSprite, 5, false});

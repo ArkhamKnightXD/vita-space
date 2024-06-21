@@ -36,25 +36,25 @@ elseif(VITA)
 		VERSION "01.00"
 		NAME ${PROJECT_NAME}
 		FILE platform/vita/sce_sys sce_sys
-		FILE square_sans_serif_7.ttf square_sans_serif_7.ttf
-		FILE laser.ogg laser.ogg
-		FILE explosion.ogg explosion.ogg
-		FILE alien_1.png alien_1.png
-		FILE alien_2.png alien_2.png
-		FILE alien_3.png alien_3.png
-		FILE mystery.png mystery.png
-		FILE spaceship.png spaceship.png
-		FILE structure.png structure.png
+		FILE res/fonts/square_sans_serif_7.ttf res/fonts/square_sans_serif_7.ttf
+		FILE res/sounds/laser.ogg res/sounds/laser.ogg
+		FILE res/sounds/explosion.ogg res/sounds/explosion.ogg
+		FILE res/sprites/alien_1.png res/sprites/alien_1.png
+		FILE res/sprites/alien_2.png res/sprites/alien_2.png
+		FILE res/sprites/alien_3.png res/sprites/alien_3.png
+		FILE res/sprites/mystery.png res/sprites/mystery.png
+		FILE res/sprites/spaceship.png res/sprites/spaceship.png
+		FILE res/sprites/structure.png res/sprites/structure.png
 	)
 endif()
 
-file(COPY square_sans_serif_7.ttf DESTINATION ${CMAKE_BINARY_DIR})
-file(COPY laser.ogg DESTINATION ${CMAKE_BINARY_DIR})
-file(COPY explosion.ogg DESTINATION ${CMAKE_BINARY_DIR})
-file(COPY alien_1.png DESTINATION ${CMAKE_BINARY_DIR})
-file(COPY alien_2.png DESTINATION ${CMAKE_BINARY_DIR})
-file(COPY alien_3.png DESTINATION ${CMAKE_BINARY_DIR})
-file(COPY mystery.png DESTINATION ${CMAKE_BINARY_DIR})
-file(COPY spaceship.png DESTINATION ${CMAKE_BINARY_DIR})
-file(COPY structure.png DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY res/fonts/square_sans_serif_7.ttf DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY res/sounds/laser.ogg DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY res/sounds/explosion.ogg DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY res/sprites/alien_1.png DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY res/sprites/alien_2.png DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY res/sprites/alien_3.png DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY res/sprites/mystery.png DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY res/sprites/spaceship.png DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY res/sprites/structure.png DESTINATION ${CMAKE_BINARY_DIR})
 
