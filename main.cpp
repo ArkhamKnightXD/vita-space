@@ -1,6 +1,6 @@
-#include <psp2/kernel/processmgr.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 #include <iostream>
 #include <vector>
 
@@ -13,8 +13,8 @@ SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 SDL_GameController* controller = NULL;
 
-// Mix_Chunk *laserSound = nullptr;
-// Mix_Chunk *explosionSound = nullptr;
+Mix_Chunk *laserSound = nullptr;
+Mix_Chunk *explosionSound = nullptr;
  
 typedef struct
 {
@@ -87,9 +87,9 @@ bool shouldAliensGoDown = false;
 
 std::vector<Alien> createAliens()
 {
-    SDL_Texture *alienSprite1 = loadSprite("sprites/alien_1.png");
-    SDL_Texture *alienSprite2 = loadSprite("sprites/alien_2.png");
-    SDL_Texture *alienSprite3 = loadSprite("sprites/alien_3.png");
+    SDL_Texture *alienSprite1 = loadSprite("alien_1.png");
+    SDL_Texture *alienSprite2 = loadSprite("alien_2.png");
+    SDL_Texture *alienSprite3 = loadSprite("alien_3.png");
 
     std::vector<Alien> aliens;
 
@@ -179,18 +179,18 @@ void aliensMovement(float deltaTime)
     }
 }
 
-// Mix_Chunk *loadSound(const char *p_filePath)
-// {
-//     Mix_Chunk *sound = nullptr;
+Mix_Chunk *loadSound(const char *p_filePath)
+{
+    Mix_Chunk *sound = nullptr;
 
-//     sound = Mix_LoadWAV(p_filePath);
-//     if (sound == nullptr)
-//     {
-//         printf("Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError());
-//     }
+    sound = Mix_LoadWAV(p_filePath);
+    if (sound == nullptr)
+    {
+        printf("Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError());
+    }
 
-//     return sound;
-// }
+    return sound;
+}
 
 void quitGame() {
 
@@ -235,7 +235,7 @@ void checkCollisionBetweenStructureAndLaser(Laser &laser)
                 structure.isDestroyed = true;
             }
 
-            // Mix_PlayChannel(-1, explosionSound, 0);
+            Mix_PlayChannel(-1, explosionSound, 0);
         }
     }
 }
@@ -326,7 +326,7 @@ void update(float deltaTime) {
 
             lastTimePlayerShoot = 0;
 
-            // Mix_PlayChannel(-1, laserSound, 0);
+            Mix_PlayChannel(-1, laserSound, 0);
         }
     }
 
@@ -348,7 +348,7 @@ void update(float deltaTime) {
 
             mysteryShip.isDestroyed = true;
 
-            // Mix_PlayChannel(-1, explosionSound, 0);
+            Mix_PlayChannel(-1, explosionSound, 0);
         }
 
         for (Alien &alien : aliens)
@@ -360,7 +360,7 @@ void update(float deltaTime) {
 
                 player.score += alien.points;
 
-                // Mix_PlayChannel(-1, explosionSound, 0);
+                Mix_PlayChannel(-1, explosionSound, 0);
             }
         }
 
@@ -381,7 +381,7 @@ void update(float deltaTime) {
 
         lastTimeAliensShoot = 0;
 
-        // Mix_PlayChannel(-1, laserSound, 0);
+        Mix_PlayChannel(-1, laserSound, 0);
     }
 
     for (Laser &laser : alienLasers)
@@ -400,7 +400,7 @@ void update(float deltaTime) {
 
             player.lives--;
 
-            // Mix_PlayChannel(-1, explosionSound, 0);
+            Mix_PlayChannel(-1, explosionSound, 0);
         }
 
         checkCollisionBetweenStructureAndLaser(laser);
@@ -503,15 +503,15 @@ int main() {
         return -1;
     }
 
-    // if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
-    // {
-    //     printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
-    // }
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+    {
+        printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+    }
 
-    // laserSound = loadSound("res/sounds/laser.ogg");
-    // explosionSound = loadSound("res/sounds/explosion.ogg");
+    laserSound = loadSound("laser.ogg");
+    explosionSound = loadSound("explosion.ogg");
 
-    SDL_Texture *shipSprite = loadSprite("sprites/mystery.png");
+    SDL_Texture *shipSprite = loadSprite("mystery.png");
 
     SDL_Rect shipBounds = {SCREEN_WIDTH, 40, 58, 25};
 
@@ -519,7 +519,7 @@ int main() {
 
     aliens = createAliens();
 
-    SDL_Texture *playerSprite = loadSprite("sprites/spaceship.png");
+    SDL_Texture *playerSprite = loadSprite("spaceship.png");
 
     SDL_Rect playerBounds = {SCREEN_WIDTH / 2, SCREEN_HEIGHT - 40, 38, 34};
 
@@ -530,7 +530,7 @@ int main() {
     SDL_Rect structureBounds3 = {200 * 3, SCREEN_HEIGHT - 120, 56, 33};
     SDL_Rect structureBounds4 = {200 * 4, SCREEN_HEIGHT - 120, 56, 33};
 
-    SDL_Texture *structureSprite = loadSprite("sprites/structure.png");
+    SDL_Texture *structureSprite = loadSprite("structure.png");
 
     structures.push_back({structureBounds, structureSprite, 5, false});
     structures.push_back({structureBounds2, structureSprite, 5, false});
