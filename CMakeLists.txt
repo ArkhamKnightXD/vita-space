@@ -36,15 +36,15 @@ elseif(VITA)
 		VERSION "01.00"
 		NAME ${PROJECT_NAME}
 		FILE platform/vita/sce_sys sce_sys
-		FILE res/fonts/square_sans_serif_7.ttf res/fonts/square_sans_serif_7.ttf
-		FILE res/sounds/laser.ogg res/sounds/laser.ogg
-		FILE res/sounds/explosion.ogg res/sounds/explosion.ogg
-		FILE res/sprites/alien_1.png res/sprites/alien_1.png
-		FILE res/sprites/alien_2.png res/sprites/alien_2.png
-		FILE res/sprites/alien_3.png res/sprites/alien_3.png
-		FILE res/sprites/mystery.png res/sprites/mystery.png
-		FILE res/sprites/spaceship.png res/sprites/spaceship.png
-		FILE res/sprites/structure.png res/sprites/structure.png
+		FILE res/fonts/square_sans_serif_7.ttf square_sans_serif_7.ttf
+		FILE res/sounds/laser.ogg laser.ogg
+		FILE res/sounds/explosion.ogg explosion.ogg
+		FILE res/sprites/alien_1.png alien_1.png
+		FILE res/sprites/alien_2.png alien_2.png
+		FILE res/sprites/alien_3.png alien_3.png
+		FILE res/sprites/mystery.png mystery.png
+		FILE res/sprites/spaceship.png spaceship.png
+		FILE res/sprites/structure.png structure.png
 	)
 endif()
 

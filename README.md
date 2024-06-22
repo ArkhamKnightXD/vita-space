@@ -1,18 +1,4 @@
-# PSP SDL2 OSK Example
-
-This code is a simple example for text input for the Playstation Portable. This allows you to test if text input in SDL2 using the on screen keyboard is working like expected. At the moment of writing, it does not.
-
-When testing the following should happen:
-
-- When pressing Cross or A, text input will be enabled if supported. When test input is enabled "INPUT" will be displayed, then letters/text entered will be displayed on screen. When not supported "CAN'T" will be displayed on screen.
-- When pressing Circle or B, text input will be disabled. "NO INPUT" will be displayed on screen.
-- When pressing Triangle or Y, text input will be enabled without doing any checking.  When test input is enabled "INPUT" will be displayed, then letters/text entered will be displayed on screen.
-
-Pressing Start or Escape will close the app.
-
-![screenshot](screenshot.png)
-
-The app was purposely made to work on both PC and PSP, to have a bit of an idea of what should be happening and if the code is alright.
+# PSP-VITA  TEMPLATE
 
 ## Building
 
