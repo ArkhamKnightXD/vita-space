@@ -468,7 +468,7 @@ void render()
     SDL_RenderPresent(renderer);
 }
 
-int main() {
+int main(int argc, char *args[]) {
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0) {
         return -1;
