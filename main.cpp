@@ -239,6 +239,8 @@ void checkCollisionBetweenStructureAndLaser(Laser &laser)
             }
 
             Mix_PlayChannel(-1, explosionSound, 0);
+
+            break;
         }
     }
 }
@@ -428,6 +430,8 @@ void update(float deltaTime) {
                 updateScore(score);
 
                 Mix_PlayChannel(-1, explosionSound, 0);
+
+                break;
             }
         }
 
@@ -604,8 +608,8 @@ int main(int argc, char *args[]) {
     updateScore("Score: 0");
     updateLives("Lives: 2");
 
-    laserSound = loadSound("laser.ogg");
-    explosionSound = loadSound("explosion.ogg");
+    laserSound = loadSound("laser.wav");
+    explosionSound = loadSound("explosion.wav");
 
     SDL_Texture *shipSprite = loadSprite("mystery.png");
 
