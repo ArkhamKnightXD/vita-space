@@ -128,7 +128,7 @@ std::vector<Alien> createAliens()
             actualSprite = alienSprite1;
         }
 
-        for (int columns = 0; columns < 13; columns++)
+        for (int columns = 0; columns < 11; columns++)
         {
             SDL_Rect alienBounds = {positionX, positionY, 38, 34};
 
