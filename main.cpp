@@ -218,18 +218,15 @@ void quitGame() {
     SDL_DestroyTexture(scoreTexture);
     SDL_DestroyTexture(liveTexture);
     
-    // Close SDL_image
     IMG_Quit();
 
     Mix_FreeChunk(laserSound);
     Mix_FreeChunk(explosionSound);
     Mix_FreeMusic(music);
 
-    // Close SDL_mixer
     Mix_CloseAudio();
     Mix_Quit();
 
-    // Close SDL_ttf
     TTF_Quit();
 
     SDL_GameControllerClose(controller);
@@ -612,7 +609,7 @@ int main(int argc, char *args[]) {
 
     Mix_PlayMusic(music, -1);
 
-    SDL_Texture *shipSprite = loadSprite("mystery.png");
+    shipSprite = loadSprite("mystery.png");
 
     SDL_Rect shipBounds = {SCREEN_WIDTH, 40, 58, 25};
 
@@ -620,7 +617,7 @@ int main(int argc, char *args[]) {
 
     aliens = createAliens();
 
-    SDL_Texture *playerSprite = loadSprite("spaceship.png");
+    playerSprite = loadSprite("spaceship.png");
 
     SDL_Rect playerBounds = {SCREEN_WIDTH / 2, SCREEN_HEIGHT - 40, 38, 34};
 
