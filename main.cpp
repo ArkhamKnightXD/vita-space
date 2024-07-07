@@ -14,6 +14,7 @@ SDL_GameController* controller = NULL;
 
 Mix_Chunk *laserSound = nullptr;
 Mix_Chunk *explosionSound = nullptr;
+Mix_Music *music = nullptr;
 
 TTF_Font *fontSquare = nullptr; 
 
@@ -24,6 +25,13 @@ SDL_Texture *liveTexture = nullptr;
 SDL_Rect liveBounds;
 
 SDL_Color fontColor = {255, 255, 255};
+
+SDL_Texture *shipSprite = nullptr;
+SDL_Texture *playerSprite = nullptr;
+SDL_Texture *alienSprite1 = nullptr;
+SDL_Texture *alienSprite2 = nullptr;
+SDL_Texture *alienSprite3 = nullptr;
+SDL_Texture *structureSprite = nullptr;
  
 typedef struct
 {
@@ -96,9 +104,9 @@ bool shouldAliensGoDown = false;
 
 std::vector<Alien> createAliens()
 {
-    SDL_Texture *alienSprite1 = loadSprite("alien_1.png");
-    SDL_Texture *alienSprite2 = loadSprite("alien_2.png");
-    SDL_Texture *alienSprite3 = loadSprite("alien_3.png");
+    alienSprite1 = loadSprite("alien_1.png");
+    alienSprite2 = loadSprite("alien_2.png");
+    alienSprite3 = loadSprite("alien_3.png");
 
     std::vector<Alien> aliens;
 
@@ -149,13 +157,14 @@ void aliensMovement(float deltaTime)
 {
     for (Alien &alien : aliens)
     {
+        alien.x += alien.velocity * deltaTime;
+        alien.bounds.x = alien.x;
+
         float alienPosition = alien.bounds.x + alien.bounds.w;
 
         if ((!shouldChangeVelocity && alienPosition > SCREEN_WIDTH) || alienPosition < alien.bounds.w)
         {
             shouldChangeVelocity = true;
-            shouldAliensGoDown = true;
-
             break;
         }
     }
@@ -165,26 +174,10 @@ void aliensMovement(float deltaTime)
         for (Alien &alien : aliens)
         {
             alien.velocity *= -1;
+            alien.bounds.y += 10;
         }
 
         shouldChangeVelocity = false;
-    }
-
-    if (shouldAliensGoDown)
-    {
-        for (Alien &alien : aliens)
-        {
-            alien.y += 500 * deltaTime;
-            alien.bounds.y = alien.y;
-        }
-
-        shouldAliensGoDown = false;
-    }
-
-    for (Alien &alien : aliens)
-    {
-        alien.x += alien.velocity * deltaTime;
-        alien.bounds.x = alien.x;
     }
 }
 
@@ -201,7 +194,43 @@ Mix_Chunk *loadSound(const char *p_filePath)
     return sound;
 }
 
+Mix_Music *loadMusic(const char *p_filePath)
+{
+    Mix_Music *music = nullptr;
+
+    music = Mix_LoadMUS(p_filePath);
+    if (music == nullptr)
+    {
+        printf("Failed to load music! SDL_mixer Error: %s\n", Mix_GetError());
+    }
+
+    return music;
+}
+
 void quitGame() {
+
+    SDL_DestroyTexture(shipSprite);
+    SDL_DestroyTexture(playerSprite);
+    SDL_DestroyTexture(structureSprite);
+    SDL_DestroyTexture(alienSprite1);
+    SDL_DestroyTexture(alienSprite2);
+    SDL_DestroyTexture(alienSprite3);
+    SDL_DestroyTexture(scoreTexture);
+    SDL_DestroyTexture(liveTexture);
+    
+    // Close SDL_image
+    IMG_Quit();
+
+    Mix_FreeChunk(laserSound);
+    Mix_FreeChunk(explosionSound);
+    Mix_FreeMusic(music);
+
+    // Close SDL_mixer
+    Mix_CloseAudio();
+    Mix_Quit();
+
+    // Close SDL_ttf
+    TTF_Quit();
 
     SDL_GameControllerClose(controller);
     SDL_DestroyRenderer(renderer);
@@ -238,6 +267,7 @@ void checkCollisionBetweenStructureAndLaser(Laser &laser)
                 structure.isDestroyed = true;
             }
 
+            Mix_VolumeChunk(explosionSound, MIX_MAX_VOLUME / 2);
             Mix_PlayChannel(-1, explosionSound, 0);
 
             break;
@@ -245,7 +275,7 @@ void checkCollisionBetweenStructureAndLaser(Laser &laser)
     }
 }
 
-void removingDestroyedElements() {
+void removeDestroyedElements() {
 
     for (auto iterator = aliens.begin(); iterator != aliens.end();)
     {
@@ -364,10 +394,7 @@ void update(float deltaTime) {
 
         if (laser.bounds.y < 0)
             laser.isDestroyed = true;
-    }
 
-    for (Laser &laser : playerLasers)
-    {
         if (!mysteryShip.isDestroyed && SDL_HasIntersection(&mysteryShip.bounds, &laser.bounds))
         {
             laser.isDestroyed = true;
@@ -379,8 +406,11 @@ void update(float deltaTime) {
             updateTextureText(scoreTexture, scoreString.c_str());
 
             mysteryShip.isDestroyed = true;
-
+            
+            Mix_VolumeChunk(explosionSound, MIX_MAX_VOLUME / 2);
             Mix_PlayChannel(-1, explosionSound, 0);
+
+            break;
         }
 
         for (Alien &alien : aliens)
@@ -396,6 +426,8 @@ void update(float deltaTime) {
 
                 updateTextureText(scoreTexture, scoreString.c_str());
 
+                //method to reduce the volume in half.
+                Mix_VolumeChunk(explosionSound, MIX_MAX_VOLUME / 2);
                 Mix_PlayChannel(-1, explosionSound, 0);
 
                 break;
@@ -428,10 +460,7 @@ void update(float deltaTime) {
 
         if (laser.bounds.y > SCREEN_HEIGHT)
             laser.isDestroyed = true;
-    }
 
-    for (Laser &laser : alienLasers)
-    {
         if (player.lives > 0 && SDL_HasIntersection(&player.bounds, &laser.bounds))
         {
             laser.isDestroyed = true;
@@ -442,7 +471,10 @@ void update(float deltaTime) {
 
             updateTextureText(liveTexture, liveString.c_str());
 
+            Mix_VolumeChunk(explosionSound, MIX_MAX_VOLUME / 2);
             Mix_PlayChannel(-1, explosionSound, 0);
+
+            break;
         }
 
         checkCollisionBetweenStructureAndLaser(laser);
@@ -450,7 +482,7 @@ void update(float deltaTime) {
 
     aliensMovement(deltaTime);
 
-    removingDestroyedElements();
+    removeDestroyedElements();
 }
 
 void renderSprite(SDL_Texture *sprite, SDL_Rect spriteBounds)
@@ -473,7 +505,6 @@ void render()
     liveBounds.x = 600;
     liveBounds.y = liveBounds.h / 2;
     SDL_RenderCopy(renderer, liveTexture, NULL, &liveBounds);
-
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
@@ -574,6 +605,13 @@ int main(int argc, char *args[]) {
     laserSound = loadSound("laser.wav");
     explosionSound = loadSound("explosion.wav");
 
+    music = loadMusic("music.wav");
+    
+    //reduce music volume
+    // Mix_VolumeMusic(MIX_MAX_VOLUME / 2);
+
+    Mix_PlayMusic(music, -1);
+
     SDL_Texture *shipSprite = loadSprite("mystery.png");
 
     SDL_Rect shipBounds = {SCREEN_WIDTH, 40, 58, 25};
@@ -593,7 +631,7 @@ int main(int argc, char *args[]) {
     SDL_Rect structureBounds3 = {200 * 3, SCREEN_HEIGHT - 120, 56, 33};
     SDL_Rect structureBounds4 = {200 * 4, SCREEN_HEIGHT - 120, 56, 33};
 
-    SDL_Texture *structureSprite = loadSprite("structure.png");
+    structureSprite = loadSprite("structure.png");
 
     structures.push_back({structureBounds, structureSprite, 5, false});
     structures.push_back({structureBounds2, structureSprite, 5, false});
