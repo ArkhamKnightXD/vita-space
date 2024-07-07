@@ -264,7 +264,6 @@ void checkCollisionBetweenStructureAndLaser(Laser &laser)
                 structure.isDestroyed = true;
             }
 
-            Mix_VolumeChunk(explosionSound, MIX_MAX_VOLUME / 2);
             Mix_PlayChannel(-1, explosionSound, 0);
 
             break;
@@ -404,7 +403,6 @@ void update(float deltaTime) {
 
             mysteryShip.isDestroyed = true;
             
-            Mix_VolumeChunk(explosionSound, MIX_MAX_VOLUME / 2);
             Mix_PlayChannel(-1, explosionSound, 0);
 
             break;
@@ -423,8 +421,6 @@ void update(float deltaTime) {
 
                 updateTextureText(scoreTexture, scoreString.c_str());
 
-                //method to reduce the volume in half.
-                Mix_VolumeChunk(explosionSound, MIX_MAX_VOLUME / 2);
                 Mix_PlayChannel(-1, explosionSound, 0);
 
                 break;
@@ -468,7 +464,6 @@ void update(float deltaTime) {
 
             updateTextureText(liveTexture, liveString.c_str());
 
-            Mix_VolumeChunk(explosionSound, MIX_MAX_VOLUME / 2);
             Mix_PlayChannel(-1, explosionSound, 0);
 
             break;
@@ -601,6 +596,7 @@ int main(int argc, char *args[]) {
 
     laserSound = loadSound("laser.wav");
     explosionSound = loadSound("explosion.wav");
+    Mix_VolumeChunk(explosionSound, MIX_MAX_VOLUME / 2);
 
     music = loadMusic("music.wav");
     
