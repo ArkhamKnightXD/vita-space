@@ -509,17 +509,16 @@ int main(int argc, char *args[]) {
         return 1;
     }
 
-    if (SDL_NumJoysticks() < 1) {
+    if (SDL_NumJoysticks() < 1) 
+    {
         printf("No game controllers connected!\n");
         return -1;
     } 
     else 
     {
-
         controller = SDL_GameControllerOpen(0);
         if (controller == NULL)
         {
-
             printf("Unable to open game controller! SDL Error: %s\n", SDL_GetError());
             return -1;
         }
